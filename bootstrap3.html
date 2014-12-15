@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Title Page</title>
+
+	<link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/static/huer-0.1.0.css" rel="stylesheet">
+	<link href="/static/bootstrap3-style.css" rel="stylesheet">
+</head>
+<body>
+	<div class="container" data-huer-effect="blur" style="text-align: center">
+		<h1 class="text-center">Hello World</h1>
+		<button class="btn btn-md btn-primary">Click to alert</button>
+	</div>
+	<script src="http://code.jquery.com/jquery.js"></script>
+	<script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+	<script src="/static/huer-0.1.0.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			var instance;
+			$('body').on('click','.btn',function(){
+				if($(this).hasClass('btn-danger')){
+					instance = huer('<h4>Remove</h4><p>It was removed!</p><hr><div><button type="button" class="btn btn-default" data-destroy="click" tabindex="1">Close</button></div>');
+				} else if($(this).hasClass('btn-primary')){
+					instance = huer('<h4>Remove</h4><p>Do you want to remove this?</p><hr><div><button style="margin-right: 10px;" type="button" class="btn btn-default" data-destroy="click" tabindex="1">Avbryt</button><button tabindex="2" style="margin-left: 10px;" type="button" class="btn btn-danger btn-delete">Radera</button></div>'
+					);
+
+				}
+			});
+		});
+	</script>
+</body>
+</html>

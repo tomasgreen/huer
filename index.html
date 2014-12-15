@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<meta name="description" content="(hue +‎ -er) One who cries out or gives an alarm - Modal library and alert view replacement" />
+	<meta name="keywords" content="javascript, modal, alert, dependecy free, github, mit license" />
+	<meta name="author" content="Tomas Green" />
+	<title>huer</title>
+	<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.1/normalize.min.css">
+	<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/styles/github.min.css">
+	<link rel="stylesheet" type="text/css" href="static/huer-0.1.0.min.css?v=0.1.0-build1">
+	<link rel="stylesheet" type="text/css" href="static/style.css?v=0.1.0-build1">
+</head>
+<body>
+	<div class="site" data-huer-effect="blur">
+		<div class="row-container header-container">
+			<div class="row">
+				<div class="col">
+					<a href="http://www.tomasgreen.se/huer">huer</a>
+					<span style="float: right; margin-left: 10px;"><a href="https://github.com/tomasgreen/huer/archive/master.zip"> Download</a></span>
+					<span style="float: right"><a href="https://github.com/tomasgreen/huer">Github</a></span>
+				</div>
+			</div>
+		</div>
+		<div class="row-container first-container">
+			<div class="row title">
+				<div class="col">
+					<h2>(hue +‎ -er) One who cries out or gives an alarm</h2>
+					<ul>
+						<li>Dependency free</li>
+						<li>About 10 KB miminized including css</li>
+					</ul>
+					<div style="text-align: center">
+						<a class="bigbutton" id="demo1">Demo</a>
+						<a href="#documentation" class="bigbutton docs">Documentation</a>
+						<a href="https://github.com/tomasgreen/huer/archive/master.zip" class="bigbutton">Download</a>
+						<a href="https://github.com/tomasgreen/huer" class="bigbutton">View on Github</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row-container">
+			<div class="row">
+				<div class="col">
+					<h1>Usage</h1>
+					<p>There's one thing you can think about when constructing your html and that's tabindex on buttons. Not using the tabindex will make the tab-button on your keyboard useless.</p>
+					<pre><code class="js">var instance = huer('Your html');</code></pre>
+					<pre><code class="js">var instance = huer({
+    html: 'Your html',
+    showOnInit: false,
+    clickOutsideToDismiss: true
+});
+instance.show();
+</code></pre>
+
+					<h2>Basic</h2>
+					<p>Combiding huer with a template engine of sorts is recommended, but of course a simple inline string will do the job.</p>
+					<pre><code class="js" id="example1"></code></pre>
+					<p><button class="btn btn-green" id="test1">Alert demo</button></p>
+
+					<h2>Custom and default functionality</h2>
+					<p>Creating a simpel wrapper around the script making your own confirmation box is easy. Use vanilla JS, jQuery or whatever you want.</p>
+					<pre><code class="js" id="example2"></code></pre>
+
+					<p><button class="btn btn-green" id="test2">Confirm demo</button></p>
+
+					<h2>Extended functionality</h2>
+					<p>Using your own html gives you the power to use as many buttons as you want.</p>
+					<pre><code class="js" id="example3"></code></pre>
+					<p><button class="btn btn-green" id="test3">Unsaved changes demo</button></p>
+				</div>
+			</div>
+		</div>
+		<div class="row-container third-container">
+			<a name="documentation"></a>
+			<div class="row">
+				<div class="col">
+					<h1>Methods</h1>
+				</div>
+			</div>
+			<div class="row">
+				<table class="table">
+					<thead>
+						<tr>
+							<th style="width: 250px">Method</th>
+							<th>Description</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><small>void</small> show()</td>
+							<td>Shows the view unless already shown.</td>
+						</tr>
+						<tr>
+							<td><small>void</small> hide()</td>
+							<td>Hides the view unless already hidden.</td>
+						</tr>
+						<tr>
+							<td><small>void</small> destroy()</td>
+							<td>Destroys the view and sets the instance to null.</td>
+						</tr>
+						<tr>
+							<td><small>string</small> getHtml()</td>
+							<td>Returns the content node of the view.</td>
+						</tr>
+						<tr>
+							<td><small>void</small> click(str/el/arr)</td>
+							<td>Add click events on any element in within the container. It also works on touch.</td>
+						</tr>
+						<tr>
+							<td><small>Array</small> query(string)</td>
+							<td>Query elements within the container.</td>
+						</tr>
+						<tr>
+							<td><small>void</small> attr(str/el/arr, attribute, value)</td>
+							<td>Set attributes to elements within the container.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="row">
+				<div class="col">
+					<h1>Options</h1>
+					<p>All default options can be changed via huer.globals</p>
+					<pre><code class="js">huer.globals.blurContent = false;</code></pre>
+				</div>
+			</div>
+			<div class="row">
+				<table class="table">
+					<thead>
+						<tr>
+							<th style="width: 250px">Property</th>
+							<th>Description</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>html <small>string</small>
+								<br><small>(default: 'Your view is empty') </small>
+							</td>
+							<td>Set the content of your view, which can be anything you desire.</td>
+						</tr>
+						<tr>
+							<td>showOnInit <small>bool</small>
+								<br><small>(default: true)</small>
+							</td>
+							<td>Turns on/off the automatic display of the view after initialization.</td>
+						</tr>
+						<tr>
+							<td>clickOutsideToDismiss <small>bool</small>
+								<br><small>(default: true)</small>
+							</td>
+							<td>Turns on/off the dismissal of the view when clicking on the overlay.</td>
+						</tr>
+						<tr>
+							<td>featureFailCallback <small>function(features)</small>
+								<br><small>(default: null)</small>
+							</td>
+							<td>If the browser lacks the necessary features an alert will be shown. But as an option you could use a callback function to mend the situation. The function takes one argument which will be the feature control object.</td>
+						</tr>
+						<tr>
+							<td>blurContent <small>bool</small>
+								<br><small>(default: true) </small>
+							</td>
+							<td>Turns on/off the blurring of the backdrop. Which elemens are to be blurred can be set with the options <strong>blurSelector</strong> or <strong>blurAllSiblings</strong>. This property will be turned off if the browser does not support filter. <strong>Observe</strong> that filters cannot be animated with the latest stable releases of Firefox and IE <small>(referencedate 2014-11-21)</small>. This means that the feature test will pass but not work in those browsers.</td>
+						</tr>
+						<tr>
+							<td>blurAllSiblings <small>bool</small>
+								<br><small>(default: false) </small>
+							</td>
+							<td>Turns on/off blurring all siblings to the container element. This option will superseed the <strong>blurSelector</strong>.</td>
+						</tr>
+						<tr>
+							<td>blurSelector <small>string</small>
+								<br><small>(default: [data-huer-effect="blur"]) </small>
+							</td>
+							<td>The query that will decide which elements to blur.</td>
+						</tr>
+						<tr>
+							<td>wrapContent <small>bool</small>
+								<br><small>(default: true) </small>
+							</td>
+							<td>Turns on/off wrapping the content in an element with the default content container class.</td>
+						</tr>
+						<tr>
+							<td>centerize <small>bool</small>
+								<br><small>(default: true) </small>
+							</td>
+							<td>Turns on/off placing the body of the view in the veritcal and horizontal center of the window.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<footer></footer>
+		</div>
+	</div>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/highlight.min.js"></script>
+	<script src="static/huer-0.1.0.min.js?v=0.1.0-build1"></script>
+	<script src="static/examples.js?v=0.1.0-build1" type="text/javascript"> </script>
+</body>
+</html>

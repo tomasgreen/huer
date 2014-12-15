@@ -1,0 +1,280 @@
+@shade1: #468966;
+@shade2: #FFF0A5;
+@shade3: #FFB03B;
+@shade4: #B64926;
+@shade5: #8E2800;
+@shade6: #263248;
+@shade7: #644D52;
+@shade7: #2F2933;
+@shade12: #473248;
+
+
+body {
+	position: relative;
+	padding: 0;
+	margin: 0;
+	font-family: 'Helvetica Neue','Open Sans','Helvetica','Arial',sans-serif;
+	font-size: 15px;
+	font-weight: 300;
+	color: #333;
+	background-repeat: no-repeat;
+	background-color: #fff;
+}
+.site {
+	position: relative;
+	z-index: 1;
+	overflow: visible;
+}
+ul {
+	padding-left: 0px;
+	text-align: center;
+}
+ul li{
+	font-size: 17px;
+	display: inline-block;
+	padding: 4px 8px;
+	margin: 4px 2px;
+	border-radius: 4px;
+}
+h1 {
+	font-size: 40px;
+	font-weight: 300;
+	margin-top: 40px;
+	margin-bottom: 0px;
+	padding-bottom: 10px;
+}
+h2 {
+	font-size: 30px;
+	font-weight: 300;
+	margin-top: 40px;
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+}
+a {
+	color: #333;
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: underline;
+}
+.table {
+	width: 100%;
+	border-collapse: collapse;
+}
+.table small {
+	color: rgba(255,255,255,0.5);
+}
+
+.table tr:nth-child(even) td{
+	background-color: rgba(0,0,0,0.2);
+}
+.table thead {
+	text-align: left;
+	border-bottom: 1px solid rgba(255,255,255,0.2);
+	font-weight: bold;
+}
+.table th {
+	vertical-align: top;
+	padding: 10px 15px;
+}
+.table td {
+	vertical-align: top;
+	padding: 10px 15px;
+}
+.row-container {
+	padding-top: 30px;
+	padding-bottom: 30px;
+	overflow: hidden;
+}
+.header-container {
+	background-color: @shade6;
+	a {
+		color: #fff;
+	}
+	border-bottom: 1px solid rgba(255,255,255,0.2);
+	padding: 15px 0px 0px 0px;
+}
+.third-container {
+	background-color: @shade12;
+	color: #fff;
+}
+.third-container pre{
+	background-color: lighten(@shade12,40%);
+	color: #fff;
+}
+.first-container {
+	padding-bottom: 50px;
+	background-color: @shade6;
+
+	color: #fff;
+	a {
+		color: #fff;
+	}
+	.title {
+		.col {
+			text-align: center;
+		}
+		h2 {
+			display: inline-block;
+			padding-bottom: 10px;
+		}
+	}
+}
+.bigbutton {
+	cursor: pointer;
+	-webkit-tap-highlight-color: transparent;
+	text-decoration: none;
+	display: inline-block;
+	padding: 10px 15px;
+	font-size: 20px;
+	border-radius: 5px;
+	margin: 5px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	background-color: lighten(@shade1,10%);
+	color: contrast(@shade1);
+}
+.bigbutton:hover {
+	background-color: rgba(255,255,255,0.2);
+	text-decoration: none;
+}
+footer {
+	height: 100px;
+}
+
+.row {
+	margin: 0px auto 20px auto;
+	clear: both;
+}
+.row .col {
+	box-sizing: border-box;
+	width: 100%;
+	padding-left: 15px;
+	padding-right: 15px;
+}
+pre {
+	background-color: #F3F3F3;
+	margin: 0px 0px 30px 0px;
+	overflow-x: auto;
+	padding: 0px;
+}
+pre .hljs {
+	background-color: transparent;
+	padding: 15px;
+}
+hr {
+	border: none;
+	height: 1px;
+	background-color: rgba(255,255,255,0.2);
+	margin: 100px 15px;
+}
+hr.menu {
+	margin-top: 15px;
+	margin-bottom: 50px;
+}
+.btn {
+	-webkit-tap-highlight-color: transparent;
+	text-decoration: none;
+	display: inline-block;
+	padding: 10px 15px;
+	font-weight: normal;
+	border: none;
+	border-radius: 5px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	background-color: #ffffff;
+	border: 1px solid #dddddd;
+}
+.btn ~ .btn {
+	margin-left: 10px;
+}
+.btn[disabled] {
+	opacity: 0.5;
+	cursor: default;
+}
+.btn:not([disabled]):hover {
+	text-decoration: none;
+	background-color: #eeeeee;
+	border: 1px solid #cccccc;
+}
+.btn:not([disabled]):active {
+	background-color: #cccccc;
+	border: 1px solid #bbbbbb;
+}
+.btn:active,.btn:focus,.btn:focus:active {
+	-webkit-appearance: none;
+	outline: none;
+}
+.btn:not([disabled]):active,.btn:not([disabled]):focus{
+	-webkit-box-shadow: 0px 0px 4px 0px rgba(100, 100, 100, 0.4);
+	-moz-box-shadow: 0px 0px 4px 0px rgba(100, 100, 100, 0.4);
+	box-shadow: 0px 0px 4px 0px rgba(100, 100, 100, 0.4);
+}
+
+.create-btn (@name: 'btn'; @color: #eeeeee) {
+	.@{name} {
+		color: contrast(@color);
+		background-color:  @color;
+		border: 1px solid darken(@color, 5%)
+	}
+	.@{name}:not([disabled]):active,.@{name}:not([disabled]):focus {
+		-webkit-box-shadow: 0px 0px 4px 0px darken(@color, 10%);
+		-moz-box-shadow: 0px 0px 4px 0px darken(@color, 10%);
+		box-shadow: 0px 0px 4px 0px darken(@color, 10%);
+	}
+	.@{name}:not([disabled]):hover {
+		background-color: darken(@color, 10%);
+		border: 1px solid darken(@color, 20%);
+	}
+	.@{name}:not([disabled]):active {
+		background-color: darken(@color, 15%);
+		border: 1px solid darken(@color, 25%);
+	}
+}
+.create-btn(btn-blue; @shade4);
+.create-btn(btn-green; @shade1);
+.create-btn(btn-red; @shade5);
+
+@media (max-width: 768px){
+	.table {
+		border-top: 1px solid rgba(0,0,0,0.2);
+		border-bottom: 1px solid rgba(0,0,0,0.2);
+	}
+	.table tbody td {
+		display: block;
+	}
+	.table tbody td:last-child {
+		margin-bottom: 20px;
+	}
+	.table thead {
+		display: none;
+	}
+	hr {
+		margin: 50px 0px;
+	}
+	hr.menu {
+		margin: 15px 0px 25px 0px;
+	}
+	.bigbutton {
+		display: block;
+	}
+}
+@media (min-width: 768px) {
+	.row {
+		width: 750px;
+	}
+}
+@media (min-width: 992px) {
+	.row {
+		width: 970px;
+	}
+}
+@media (min-width: 1200px) {
+	.row {
+		width: 1170px;
+	}
+}
