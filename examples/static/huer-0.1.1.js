@@ -186,7 +186,7 @@
 		wrapContent: true,
 		centerize: true
 	};
-	var Factory = function () {
+	var Huer = function () {
 		var options;
 		var _this = this;
 		if (_isObject(arguments[0])) {
@@ -244,7 +244,7 @@
 			_this.show();
 		}
 	};
-	Factory.prototype.blurContent = function () {
+	Huer.prototype.blurContent = function () {
 		var _this = this;
 		if (!_this.opt.blurContent) return;
 		var els = (_this.opt.blurAllSiblings) ? _this.container.parentNode.childNodes : document.querySelectorAll(_this.opt.blurSelector);
@@ -253,7 +253,7 @@
 			_addClass(els[i], 'huer-blur');
 		}
 	};
-	Factory.prototype.focusContent = function () {
+	Huer.prototype.focusContent = function () {
 		var _this = this;
 		if (!_this.opt.blurContent) return;
 		var els = document.querySelectorAll('.huer-blur');
@@ -261,7 +261,7 @@
 		_removeClass(els, 'huer-blur');
 		_animateCSS(els, 'huer-focus');
 	};
-	Factory.prototype.toggleEffects = function (finishedCallback) {
+	Huer.prototype.toggleEffects = function (finishedCallback) {
 		var _this = this;
 		if (!_this.opt.useEffects) {
 			if (finishedCallback) finishedCallback();
@@ -292,7 +292,7 @@
 			_this.blurContent();
 		}
 	};
-	Factory.prototype.show = function (callback) {
+	Huer.prototype.show = function (callback) {
 		var _this = this;
 		if (_this.isVisible) return;
 
@@ -309,10 +309,10 @@
 		_this.focusElement(true);
 		_this.isVisible = true;
 	};
-	Factory.prototype.onOverlayClick = function () {
+	Huer.prototype.onOverlayClick = function () {
 		if (this.opt.clickOutsideToDismiss && !this.isBusy()) this.destroy();
 	};
-	Factory.prototype.onWindowKeydown = function (e) {
+	Huer.prototype.onWindowKeydown = function (e) {
 		var keyCode = e.keyCode || e.which;
 		if ([9, 13, 32, 27].indexOf(keyCode) === -1) {
 			//_stopEventPropagation(e);
@@ -324,7 +324,7 @@
 			this.focusElement();
 		}
 	};
-	Factory.prototype.focusElement = function (reset) {
+	Huer.prototype.focusElement = function (reset) {
 		if (reset) this.lastTabindex = null;
 		var els = this.query('[tabindex]');
 		if (!els.length) {
@@ -348,7 +348,7 @@
 		els[0].focus();
 		this.lastTabindex = els[0].getAttribute('tabindex');
 	};
-	Factory.prototype.hide = function (callback) {
+	Huer.prototype.hide = function (callback) {
 		if (!this.isVisible) return;
 
 		_off(window, 'keydown', this.vars.onWindowKeydownEvent);
@@ -356,25 +356,25 @@
 		this.toggleEffects(callback);
 		this.isVisible = false;
 	};
-	Factory.prototype.getHtml = function () {
+	Huer.prototype.getHtml = function () {
 		return this.container;
 	};
-	Factory.prototype.query = function (string) {
+	Huer.prototype.query = function (string) {
 		return _toArray(this.container.querySelectorAll(string));
 	};
-	Factory.prototype.click = function (els, func) {
+	Huer.prototype.click = function (els, func) {
 		if (_isString(els)) els = this.query(els);
 		_tapOn(els, func);
 	};
-	Factory.prototype.attr = function (els, attrib, value) {
+	Huer.prototype.attr = function (els, attrib, value) {
 		if (_isString(els)) els = this.query(els);
 		_attr(_toArray(els), attrib, value);
 	};
-	Factory.prototype.isBusy = function (set) {
+	Huer.prototype.isBusy = function (set) {
 		if (set !== undefined && (set === true || set === false)) this.busy = set;
 		return this.busy || false;
 	};
-	Factory.prototype.destroy = function () {
+	Huer.prototype.destroy = function () {
 		var _this = this;
 		_this.hide(function () {
 			_removeNode(_this.container);
@@ -388,7 +388,7 @@
 			_instance.opt.blurContent = false;
 			_instance.destroy();
 		}
-		_instance = new Factory(options);
+		_instance = new Huer(options);
 		return _instance;
 	};
 	this.huer.globals = defaults;
