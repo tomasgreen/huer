@@ -6,9 +6,9 @@
  */
 (function () {
 	'use strict';
-	var _animationEndEvents = 'webkitAnimationEnd mozAnimationEnd msAnimationEnd oAnimationEnd animationend';
-	var _animationStartEvents = 'webkitAnimationStart mozAnimationStart msAnimationStart oAnimationStart animationstart';
-	var _isTouchDevice = 'ontouchstart' in document.documentElement;
+	var _animationEndEvents = 'webkitAnimationEnd mozAnimationEnd msAnimationEnd oAnimationEnd animationend',
+		_animationStartEvents = 'webkitAnimationStart mozAnimationStart msAnimationStart oAnimationStart animationstart',
+		_isTouchDevice = 'ontouchstart' in document.documentElement;
 
 	function _removeNode(element) {
 		if (!element || !element.parentNode) return;
@@ -40,36 +40,29 @@
 		return Array.prototype.slice.call(els, 0);
 	}
 
-	function _createElement(type, attributes, parent, html) {
-		var el;
+	function _toInt(n) {
+		return parseInt(n, 10);
+	}
+
+	function _createElement(type, attrib, parent, html) {
+		var el, cls, id, arr;
+		if (!attrib) attrib = {};
 		if (type.indexOf('.') !== -1) {
-			var arr = type.split('.');
+			arr = type.split('.');
 			type = arr[0];
-			el = document.createElement(arr[0]);
 			arr.shift();
-			el.setAttribute('class', arr.join(' '));
-		} else {
-			el = document.createElement(type);
+			attrib.class = arr.join(' ');
 		}
-		for (var i in attributes) el.setAttribute(i, attributes[i]);
+		if (type.indexOf('#') !== -1) {
+			arr = type.split('#');
+			type = arr[0];
+			attrib.id = arr[1];
+		}
+		el = document.createElement(type);
+		for (var i in attrib) el.setAttribute(i, attrib[i]);
 		if (parent) parent.appendChild(el);
 		if (html) el.innerHTML = html;
 		return el;
-	}
-
-	function _on(el, events, func, useCapture) {
-		if (!el || (el.length === 0 && el != window)) return;
-		if (useCapture === undefined) useCapture = false;
-		if (el.length) {
-			for (var i = 0; i < el.length; i++) {
-				_on(el[i], events, func, useCapture);
-			}
-			return;
-		}
-		var ev = events.split(' ');
-		for (var e in ev) {
-			el.addEventListener(ev[e], func, useCapture);
-		}
 	}
 
 	function _stopEventPropagation(e) {
@@ -105,40 +98,74 @@
 		_off(el, 'touchstart touchend touchcancel click');
 	}
 
-	function _off(el, events, func) {
-		if (!el || (el.length === 0 && el != window)) return;
-		if (el.length) {
-			for (var i = 0; i < el.length; i++) {
-				_off(el[i], events, func);
-			}
-			return;
-		}
-		var ev = events.split(' ');
-		for (var e in ev) {
-			el.removeEventListener(ev[e], func);
-		}
+	function _each(o, func) {
+		if (!o || (o.length === 0 && o != window)) return;
+		if (!o.length) func(o);
+		else Array.prototype.forEach.call(o, function (el, i) {
+			func(el);
+		});
 	}
 
-	function _addClass(el, className) {
-		if (el.classList) {
-			var arr = className.split(' ');
-			for (var i in arr) {
-				el.classList.add(arr[i]);
-			}
-		} else el.className += ' ' + className;
+	function _one(el, events, func, useCapture) {
+		_on(el, events, function (ev) {
+			func(ev);
+			_off(el, events, func);
+		}, useCapture);
 	}
 
-	function _removeClass(el, className) {
-		if (el.classList) {
-			var arr = className.split(' ');
-			for (var i in arr) {
-				el.classList.remove(arr[i]);
-			}
-		} else el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+	function _on(els, events, func, useCapture) {
+		_each(els, function (el) {
+			var ev = events.split(' ');
+			for (var e in ev) el.addEventListener(ev[e], func, useCapture);
+		});
 	}
+
+	function _off(els, events, func) {
+		_each(els, function (el) {
+			var ev = events.split(' ');
+			for (var e in ev) el.removeEventListener(ev[e], func);
+		});
+	}
+
+	function _addClass(els, cls) {
+		_each(els, function (el) {
+			if (el.classList) {
+				var arr = cls.split(' ');
+				for (var i in arr) el.classList.add(arr[i]);
+			} else el.className += ' ' + cls;
+		});
+	}
+
+	function _removeClass(els, cls) {
+		_each(els, function (el) {
+			if (el.classList) {
+				var arr = cls.split(' ');
+				for (var i in arr) el.classList.remove(arr[i]);
+			} else el.className = el.className.replace(new RegExp('(^|\\b)' + cls.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+		});
+	}
+
+	function _animateCSS(el, cls, start, end) {
+		if (start) _one(el, _animationStartEvents, start);
+		_one(el, _animationStartEvents, function (ev) {
+			_removeClass(el, cls);
+			if (end) end(ev);
+		});
+		_addClass(el, cls);
+	}
+
+	function _attr(els, attrib, value) {
+		_each(els, function (el) {
+			el.setAttribute(attrib, value);
+		});
+	};
 
 	function _isObject(obj) {
 		return obj === Object(obj);
+	}
+
+	function _isString(obj) {
+		return (typeof obj === 'string');
 	}
 
 	function _centerize(el) {
@@ -159,7 +186,7 @@
 		wrapContent: true,
 		centerize: true
 	};
-	var Self = function () {
+	var Factory = function () {
 		var options;
 		var _this = this;
 		if (_isObject(arguments[0])) {
@@ -171,7 +198,7 @@
 		}
 		_this.element = document.body;
 		_this.opt = {};
-
+		_this.vars = {};
 		if (options === undefined) options = {};
 		for (var i in defaults) {
 			_this.opt[i] = (options[i] !== undefined) ? options[i] : defaults[i];
@@ -211,12 +238,13 @@
 		_this.click('[data-destroy="click"]', function () {
 			_this.destroy();
 		});
-		_this.click(_this.overlay, _this.onOverlayClick);
+		_this.vars.onOverlayClickEvent = _this.onOverlayClick.bind(_this);
+		_this.click(_this.overlay, _this.vars.onOverlayClickEvent);
 		if (_this.opt.showOnInit) {
 			_this.show();
 		}
 	};
-	Self.prototype.blurContent = function () {
+	Factory.prototype.blurContent = function () {
 		var _this = this;
 		if (!_this.opt.blurContent) return;
 		var els = (_this.opt.blurAllSiblings) ? _this.container.parentNode.childNodes : document.querySelectorAll(_this.opt.blurSelector);
@@ -225,62 +253,46 @@
 			_addClass(els[i], 'huer-blur');
 		}
 	};
-	Self.prototype.focusContent = function () {
+	Factory.prototype.focusContent = function () {
 		var _this = this;
 		if (!_this.opt.blurContent) return;
 		var els = document.querySelectorAll('.huer-blur');
 
-		function animationEnd() {
-			for (var i = 0; i < els.length; i++) {
-				_removeClass(els[i], 'huer-focus');
-				_off(els[i], _animationEndEvents, animationEnd);
-			}
-		}
-		for (var i = 0; i < els.length; i++) {
-			_removeClass(els[i], 'huer-blur');
-			_addClass(els[i], 'huer-focus');
-			_on(els[i], _animationEndEvents, animationEnd);
-		}
+		_removeClass(els, 'huer-blur');
+		_animateCSS(els, 'huer-focus');
 	};
-	Self.prototype.toggleEffects = function (finishedCallback) {
+	Factory.prototype.toggleEffects = function (finishedCallback) {
 		var _this = this;
 		if (!_this.opt.useEffects) {
 			if (finishedCallback) finishedCallback();
 			return;
 		}
 		if (_this.isVisible) {
-			_addClass(_this.overlay, 'huer-fade-out');
-			_addClass(_this.body, 'huer-zoom-out');
-			_this.focusContent();
-
 			var animationOutEnd = function () {
 				_removeClass(_this.overlay, 'huer-fade-out');
 				_removeClass(_this.body, 'huer-zoom-out');
 				_this.container.style.display = 'none';
 				if (finishedCallback) finishedCallback();
-				_off(_this.body, _animationEndEvents, animationOutEnd);
 			};
-			_on(_this.body, _animationEndEvents, animationOutEnd);
+			_one(_this.body, _animationEndEvents, animationOutEnd);
+
+			_addClass(_this.overlay, 'huer-fade-out');
+			_addClass(_this.body, 'huer-zoom-out');
+			_this.focusContent();
 		} else {
-			_addClass(_this.overlay, 'huer-fade-in');
-			_addClass(_this.body, 'huer-bounce-in');
-			_this.blurContent();
-
-			var animationInStart = function () {
-				_off(_this.body, _animationStartEvents, animationInStart);
-			};
-
 			var animationInEnd = function () {
 				_removeClass(_this.overlay, 'huer-fade-in');
 				_removeClass(_this.body, 'huer-bounce-in');
 				if (finishedCallback) finishedCallback();
-				_off(_this.body, _animationEndEvents, animationInEnd);
 			};
-			_on(_this.body, _animationStartEvents, animationInStart);
-			_on(_this.body, _animationEndEvents, animationInEnd);
+			_one(_this.body, _animationEndEvents, animationInEnd);
+
+			_addClass(_this.overlay, 'huer-fade-in');
+			_addClass(_this.body, 'huer-bounce-in');
+			_this.blurContent();
 		}
 	};
-	Self.prototype.show = function (callback) {
+	Factory.prototype.show = function (callback) {
 		var _this = this;
 		if (_this.isVisible) return;
 
@@ -292,83 +304,77 @@
 		_this.container.style.visibility = 'visible';
 
 		_this.toggleEffects(callback);
-
-		this.onOverlayClick = function () {
-			if (_this.opt.clickOutsideToDismiss && !_this.isBusy()) {
-				_this.destroy();
-			}
-		};
-		this.onWindowKeydown = function (e) {
-			var keyCode = e.keyCode || e.which;
-			if ([9, 13, 32, 27].indexOf(keyCode) === -1) {
-				//_stopEventPropagation(e);
-				return;
-			}
-			if (keyCode === 9) {
-				//var el = e.target || e.srcElement;
-				_stopEventPropagation(e);
-				_this.focusElement();
-			}
-		};
-		this.focusElement = function (reset) {
-			if (reset) _this.lastTabindex = null;
-			var els = _this.query('[tabindex]');
-			if (!els.length) {
-				_this.overlay.focus();
-				return;
-			}
-			els = _toArray(els);
-			els.sort(function (a, b) {
-				if (!a.getAttribute || !b.getAttribute) return -1;
-				return parseInt(a.getAttribute('tabindex')) - parseInt(b.getAttribute('tabindex'));
-			});
-			if (_this.lastTabindex) {
-				for (var e = 0; e < els.length; e++) {
-					if (els[e].getAttribute('tabindex') == _this.lastTabindex && e < els.length - 1) {
-						els[e + 1].focus();
-						_this.lastTabindex = els[e + 1].getAttribute('tabindex');
-						return;
-					}
-				}
-			}
-			els[0].focus();
-			_this.lastTabindex = els[0].getAttribute('tabindex');
-		};
-		_on(window, 'keydown', _this.onWindowKeydown);
+		_this.vars.onWindowKeydownEvent = _this.onWindowKeydown.bind(_this);
+		_on(window, 'keydown', _this.vars.onWindowKeydownEvent);
 		_this.focusElement(true);
 		_this.isVisible = true;
 	};
-	Self.prototype.hide = function (callback) {
-		var _this = this;
-
-		if (!_this.isVisible) return;
-
-		_off(window, 'resize', _this.onWindowResize);
-		_off(window, 'keydown', _this.onWindowKeydown);
-
-		_this.toggleEffects(callback);
-		_this.isVisible = false;
+	Factory.prototype.onOverlayClick = function () {
+		if (this.opt.clickOutsideToDismiss && !this.isBusy()) this.destroy();
 	};
-	Self.prototype.getHtml = function () {
+	Factory.prototype.onWindowKeydown = function (e) {
+		var keyCode = e.keyCode || e.which;
+		if ([9, 13, 32, 27].indexOf(keyCode) === -1) {
+			//_stopEventPropagation(e);
+			return;
+		}
+		if (keyCode === 9) {
+			//var el = e.target || e.srcElement;
+			_stopEventPropagation(e);
+			this.focusElement();
+		}
+	};
+	Factory.prototype.focusElement = function (reset) {
+		if (reset) this.lastTabindex = null;
+		var els = this.query('[tabindex]');
+		if (!els.length) {
+			this.overlay.focus();
+			return;
+		}
+		els = _toArray(els);
+		els.sort(function (a, b) {
+			if (!a.getAttribute || !b.getAttribute) return -1;
+			return _toInt(a.getAttribute('tabindex')) - _toInt(b.getAttribute('tabindex'));
+		});
+		if (this.lastTabindex) {
+			for (var e = 0; e < els.length; e++) {
+				if (els[e].getAttribute('tabindex') == this.lastTabindex && e < els.length - 1) {
+					els[e + 1].focus();
+					this.lastTabindex = els[e + 1].getAttribute('tabindex');
+					return;
+				}
+			}
+		}
+		els[0].focus();
+		this.lastTabindex = els[0].getAttribute('tabindex');
+	};
+	Factory.prototype.hide = function (callback) {
+		if (!this.isVisible) return;
+
+		_off(window, 'keydown', this.vars.onWindowKeydownEvent);
+
+		this.toggleEffects(callback);
+		this.isVisible = false;
+	};
+	Factory.prototype.getHtml = function () {
 		return this.container;
 	};
-	Self.prototype.query = function (string) {
+	Factory.prototype.query = function (string) {
 		return _toArray(this.container.querySelectorAll(string));
 	};
-	Self.prototype.click = function (els, func) {
-		if (typeof els === 'string') els = this.query(els);
+	Factory.prototype.click = function (els, func) {
+		if (_isString(els)) els = this.query(els);
 		_tapOn(els, func);
 	};
-	Self.prototype.attr = function (els, attrib, value) {
-		if (typeof els === 'string') els = this.query(els);
-		els = _toArray(els);
-		for (var i in els) els[i].setAttribute(attrib, value);
+	Factory.prototype.attr = function (els, attrib, value) {
+		if (_isString(els)) els = this.query(els);
+		_attr(_toArray(els), attrib, value);
 	};
-	Self.prototype.isBusy = function (set) {
+	Factory.prototype.isBusy = function (set) {
 		if (set !== undefined && (set === true || set === false)) this.busy = set;
 		return this.busy || false;
 	};
-	Self.prototype.destroy = function () {
+	Factory.prototype.destroy = function () {
 		var _this = this;
 		_this.hide(function () {
 			_removeNode(_this.container);
@@ -382,7 +388,7 @@
 			_instance.opt.blurContent = false;
 			_instance.destroy();
 		}
-		_instance = new Self(options);
+		_instance = new Factory(options);
 		return _instance;
 	};
 	this.huer.globals = defaults;
