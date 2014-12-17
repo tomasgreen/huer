@@ -186,6 +186,7 @@
   animation-name: huerZoomOut;
 }
 .huer-container {
+  -webkit-overflow-scrolling: touch;
   display: none;
 }
 .huer-container .huer-overlay {
@@ -206,6 +207,16 @@
   z-index: 2000;
   -webkit-animation-duration: 0.25s;
   animation-duration: 0.25s;
+}
+.huer-scrollbar-measure {
+  position: absolute;
+  top: -9999px;
+  width: 50px;
+  height: 50px;
+  overflow: scroll;
+}
+.huer-stop-scrolling {
+  overflow: hidden;
 }
 .huer-content-wrapper {
   text-align: center;

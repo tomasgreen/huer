@@ -158,20 +158,54 @@ hr.menu {
   margin-top: 15px;
   margin-bottom: 50px;
 }
+.form-input-simple {
+  box-sizing: border-box;
+  width: 100%;
+  outline: none;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  padding: 3px 0px;
+  font-weight: normal;
+  border-radius: 0px;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 15px;
+}
+.form-input-simple:focus {
+  border-bottom: 1px solid #ccc;
+}
+.form-input {
+  box-sizing: border-box;
+  width: 100%;
+  -webkit-appearance: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  padding: 10px 15px;
+  font-weight: normal;
+  border-radius: 5px;
+  background-color: transparent;
+  border: 1px solid #dddddd;
+  margin-bottom: 15px;
+}
+.form-input:focus {
+  -webkit-box-shadow: 0px 0px 4px 0px rgba(100, 100, 100, 0.4);
+  -moz-box-shadow: 0px 0px 4px 0px rgba(100, 100, 100, 0.4);
+  box-shadow: 0px 0px 4px 0px rgba(100, 100, 100, 0.4);
+}
 .btn {
   -webkit-tap-highlight-color: transparent;
   text-decoration: none;
   display: inline-block;
   padding: 10px 15px;
   font-weight: normal;
-  border: none;
-  border-radius: 5px;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
   background-color: #ffffff;
   border: 1px solid #dddddd;
+  border-radius: 5px;
 }
 .btn ~ .btn {
   margin-left: 10px;

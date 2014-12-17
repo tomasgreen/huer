@@ -2,13 +2,28 @@
  * # huer
  * Author: Tomas Green (http://www.github.com/tomasgreen)
  * License: MIT
- * Version: 0.1.0
+ * Version: 0.1.1
  */
+
 (function () {
 	'use strict';
 	var _animationEndEvents = 'webkitAnimationEnd mozAnimationEnd msAnimationEnd oAnimationEnd animationend',
 		_animationStartEvents = 'webkitAnimationStart mozAnimationStart msAnimationStart oAnimationStart animationstart',
-		_isTouchDevice = 'ontouchstart' in document.documentElement;
+		_isTouchDevice = 'ontouchstart' in document.documentElement,
+		_scrollbarWidth,
+		_classPrefix = 'huer-',
+		_classFadeIn = _classPrefix + 'fade-in',
+		_classFadeOut = _classPrefix + 'fade-out',
+		_classBounceIn = _classPrefix + 'bounce-in',
+		_classZoomOut = _classPrefix + 'zoom-out',
+		_classBlur = _classPrefix + 'blur',
+		_classFocus = _classPrefix + 'focus',
+		_classStopScroll = _classPrefix + 'stop-scrolling',
+		_classContainer = _classPrefix + 'container',
+		_classOverlay = _classPrefix + 'overlay',
+		_classBody = _classPrefix + 'body',
+		_classContentWrapper = _classPrefix + 'content-wrapper',
+		_tabindexAttr = 'tabindex';
 
 	function _removeNode(element) {
 		if (!element || !element.parentNode) return;
@@ -19,15 +34,15 @@
 	function _detectCSSFeature(featurename) {
 		var feature = false,
 			domPrefixes = 'Webkit Moz ms O'.split(' '),
-			elm = document.createElement('div'),
+			el = document.createElement('div'),
 			featurenameCapital = null;
 
 		featurename = featurename.toLowerCase();
-		if (elm.style[featurename] !== undefined) feature = true;
+		if (el.style[featurename] !== undefined) feature = true;
 		if (feature === false) {
 			featurenameCapital = featurename.charAt(0).toUpperCase() + featurename.substr(1);
 			for (var i = 0; i < domPrefixes.length; i++) {
-				if (elm.style[domPrefixes[i] + featurenameCapital] !== undefined) {
+				if (el.style[domPrefixes[i] + featurenameCapital] !== undefined) {
 					feature = true;
 					break;
 				}
@@ -65,6 +80,12 @@
 		return el;
 	}
 
+	function _isChild(c, p) {
+		if (!c || !p || !c.parentNode) return false;
+		else if (c === p || c.parentNode === p) return true;
+		return _isChild(c.parentNode, p);
+	}
+
 	function _stopEventPropagation(e) {
 		if (typeof e.stopPropagation === 'function') {
 			e.stopPropagation();
@@ -94,8 +115,8 @@
 		});
 	}
 
-	function _tapOff(el) {
-		_off(el, 'touchstart touchend touchcancel click');
+	function _tapOff(el, func) {
+		_off(el, 'touchstart touchend touchcancel click', func);
 	}
 
 	function _each(o, func) {
@@ -173,13 +194,24 @@
 		el.style.marginLeft = ((el.offsetWidth / 2) * -1) + 'px';
 	}
 
+	function _getScrollbarWidth() {
+		if (_scrollbarWidth > 0) return _scrollbarWidth;
+		var el = _createElement('div.huer-scrollbar-measure', null, document.body);
+		_scrollbarWidth = el.offsetWidth - el.clientWidth
+		_removeNode(el);
+		return _scrollbarWidth;
+	}
+
 	var defaults = {
-		html: 'Your view is empty.',
+		html: 'Empty',
 		showOnInit: true,
 		useEffects: true,
-		clickOutsideToDismiss: false,
-		overlayBackgroundColor: null,
-		featureFailCallback: null,
+		preventScroll: false,
+		destroyOnClick: false,
+		destroyOnEsc: false,
+		onFeatureFail: null,
+		onDismiss: null,
+		overlayClass: null,
 		blurContent: true,
 		blurAllSiblings: false,
 		blurSelector: '[data-huer-effect="blur"]',
@@ -214,19 +246,17 @@
 		if (!featureSupport.filter) _this.opt.blurContent = false;
 		if (!featureSupport.animation || !featureSupport.transition || !featureSupport.transform) _this.opt.useEffects = false;
 		if (!featureSupport.query) {
-			if (_this.opt.featureFailCallback) _this.opt.featureFailCallback(featureSupport);
+			if (_this.opt.onFeatureFail) _this.opt.onFeatureFail(featureSupport);
 			else alert('Your browser is lacking certain features. Please update to a modern browser.');
 			return;
 		}
 
-		var container = _createElement('div.huer-container');
-		var overlay = _createElement('div.huer-overlay', null, container);
-		var body = _createElement('div.huer-body', null, container);
-		if (_this.opt.overlayBackgroundColor) {
-			overlay.style.backgroundColor = _this.opt.overlayBackgroundColor;
-		}
+		var container = _createElement('div.' + _classContainer);
+		var overlay = _createElement('div.' + _classOverlay, null, container);
+		var body = _createElement('div.' + _classBody, null, container);
+		if (_this.opt.overlayClass) _addClass(overlay, _this.opt.overlayClass);
 		if (_this.opt.wrapContent) {
-			_createElement('div.huer-content-wrapper', null, body, _this.opt.html);
+			_createElement('div.' + _classContentWrapper, null, body, _this.opt.html);
 		} else {
 			body.innerHTML = _this.opt.html;
 		}
@@ -235,64 +265,15 @@
 		_this.body = body;
 		_this.element.appendChild(_this.container);
 
+		if (_this.opt.showOnInit) _this.show();
+
 		_this.click('[data-destroy="click"]', function () {
-			_this.destroy();
+			if (!_this.isBusy()) _this.destroy(_this.opt.onDismiss);
 		});
-		_this.vars.onOverlayClickEvent = _this.onOverlayClick.bind(_this);
-		_this.click(_this.overlay, _this.vars.onOverlayClickEvent);
-		if (_this.opt.showOnInit) {
-			_this.show();
-		}
 	};
-	Huer.prototype.blurContent = function () {
-		var _this = this;
-		if (!_this.opt.blurContent) return;
-		var els = (_this.opt.blurAllSiblings) ? _this.container.parentNode.childNodes : document.querySelectorAll(_this.opt.blurSelector);
-		for (var i = 0; i < els.length; i++) {
-			if (els[i] == _this.container) continue;
-			_addClass(els[i], 'huer-blur');
-		}
-	};
-	Huer.prototype.focusContent = function () {
-		var _this = this;
-		if (!_this.opt.blurContent) return;
-		var els = document.querySelectorAll('.huer-blur');
+	var proto = Huer.prototype;
 
-		_removeClass(els, 'huer-blur');
-		_animateCSS(els, 'huer-focus');
-	};
-	Huer.prototype.toggleEffects = function (finishedCallback) {
-		var _this = this;
-		if (!_this.opt.useEffects) {
-			if (finishedCallback) finishedCallback();
-			return;
-		}
-		if (_this.isVisible) {
-			var animationOutEnd = function () {
-				_removeClass(_this.overlay, 'huer-fade-out');
-				_removeClass(_this.body, 'huer-zoom-out');
-				_this.container.style.display = 'none';
-				if (finishedCallback) finishedCallback();
-			};
-			_one(_this.body, _animationEndEvents, animationOutEnd);
-
-			_addClass(_this.overlay, 'huer-fade-out');
-			_addClass(_this.body, 'huer-zoom-out');
-			_this.focusContent();
-		} else {
-			var animationInEnd = function () {
-				_removeClass(_this.overlay, 'huer-fade-in');
-				_removeClass(_this.body, 'huer-bounce-in');
-				if (finishedCallback) finishedCallback();
-			};
-			_one(_this.body, _animationEndEvents, animationInEnd);
-
-			_addClass(_this.overlay, 'huer-fade-in');
-			_addClass(_this.body, 'huer-bounce-in');
-			_this.blurContent();
-		}
-	};
-	Huer.prototype.show = function (callback) {
+	proto.show = function (callback) {
 		var _this = this;
 		if (_this.isVisible) return;
 
@@ -304,29 +285,131 @@
 		_this.container.style.visibility = 'visible';
 
 		_this.toggleEffects(callback);
-		_this.vars.onWindowKeydownEvent = _this.onWindowKeydown.bind(_this);
-		_on(window, 'keydown', _this.vars.onWindowKeydownEvent);
+		_on(window, 'keydown', _this.vars.onKeydownEvent = _this.onKeydown.bind(_this));
 		_this.focusElement(true);
-		_this.isVisible = true;
 	};
-	Huer.prototype.onOverlayClick = function () {
-		if (this.opt.clickOutsideToDismiss && !this.isBusy()) this.destroy();
+	proto.hide = function (callback) {
+		if (!this.isVisible) return;
+
+		_off(window, 'keydown', this.vars.onKeydownEvent);
+
+		this.toggleEffects(callback);
 	};
-	Huer.prototype.onWindowKeydown = function (e) {
-		var keyCode = e.keyCode || e.which;
-		if ([9, 13, 32, 27].indexOf(keyCode) === -1) {
-			//_stopEventPropagation(e);
+	proto.destroy = function (callback) {
+		var _this = this;
+		_this.hide(function () {
+			if (callback) callback();
+			_removeNode(_this.container);
+			_this = null;
+		});
+	};
+	proto.toggleScroll = function (enable) {
+		if (!this.opt.preventScroll) return;
+		if (enable) {
+			_removeClass(document.body, _classStopScroll);
+			document.body.style.paddingRight = this.vars.bodyPadding;
+		} else {
+			this.vars.bodyPadding = document.body.style.paddingRight;
+			document.body.style.paddingRight = _toInt(this.vars.bodyPadding) + _toInt(_getScrollbarWidth()) + 'px';
+			_addClass(document.body, _classStopScroll);
+		}
+	};
+	proto.blurContent = function () {
+		var _this = this;
+		if (!_this.opt.blurContent) return;
+		var els = (_this.opt.blurAllSiblings) ? _this.container.parentNode.childNodes : document.querySelectorAll(_this.opt.blurSelector);
+		for (var i = 0; i < els.length; i++) {
+			if (els[i] == _this.container) continue;
+			_addClass(els[i], _classBlur);
+		}
+	};
+	proto.focusContent = function () {
+		var _this = this;
+		if (!_this.opt.blurContent) return;
+		var els = document.querySelectorAll('.' + _classBlur);
+
+		_removeClass(els, _classBlur);
+		_animateCSS(els, _classFocus);
+	};
+	proto.toggleEffects = function (callback) {
+		var _this = this;
+		if (!_this.opt.useEffects) {
+			_this.toggleScroll(_this.isVisible);
+			_this.isVisible = true;
+			if (callback) callback();
 			return;
 		}
-		if (keyCode === 9) {
-			//var el = e.target || e.srcElement;
+		if (_this.isVisible) {
+			function animationOutEnd() {
+				_removeClass(_this.overlay, _classFadeOut);
+				_removeClass(_this.body, _classZoomOut);
+				_this.container.style.display = 'none';
+				/*
+					toggleScroll needs to be called after the animations are done,
+					if not the effects will lag
+				*/
+				_this.toggleScroll(true);
+				_this.isVisible = false;
+
+				if (callback) callback();
+			};
+			_one(_this.body, _animationEndEvents, animationOutEnd);
+
+			_addClass(_this.overlay, _classFadeOut);
+			_addClass(_this.body, _classZoomOut);
+			_this.toggleOverlayClick();
+			_this.focusContent();
+		} else {
+			function animationInEnd() {
+				_removeClass(_this.overlay, _classFadeIn);
+				_removeClass(_this.body, _classBounceIn);
+				_this.isVisible = true;
+				_this.toggleOverlayClick();
+				if (callback) callback();
+			};
+			_one(_this.body, _animationEndEvents, animationInEnd);
+
+			_this.toggleScroll(false);
+
+			_addClass(_this.overlay, _classFadeIn);
+			_addClass(_this.body, _classBounceIn);
+
+			_this.blurContent();
+		}
+	};
+	proto.onOverlayClick = function () {
+		if (this.isVisible && this.opt.destroyOnClick && !this.isBusy()) this.destroy(this.opt.onDismiss);
+	};
+	proto.toggleOverlayClick = function () {
+		var _this = this;
+		/*
+			Somethings up with the timeing of the effects and when a user doubleclicks the clickevent bubbles up and ruins everything...
+		*/
+		setTimeout(function () {
+			if (!_this.vars.onOverlayClickEvent) {
+				_tapOn(_this.overlay, _this.vars.onOverlayClickEvent = _this.onOverlayClick.bind(_this));
+			} else {
+				_tapOff(_this.overlay, _this.vars.onOverlayClickEvent);
+				_this.vars.onOverlayClickEvent = null;
+			}
+		}, 0);
+	};
+	proto.onKeydown = function (e) {
+		var keyCode = e.keyCode || e.which;
+		var el = e.target || e.srcElement;
+		if ([9, 13, 32, 27].indexOf(keyCode) === -1) {
+			if (!_isChild(el, this.body)) return;
+		} else if (keyCode === 27 && this.opt.destroyOnEsc && !this.isBusy()) {
+			this.destroy(this.opt.onDismiss);
+		} else if (keyCode === 9) {
 			_stopEventPropagation(e);
 			this.focusElement();
 		}
+		return true;
 	};
-	Huer.prototype.focusElement = function (reset) {
+	proto.focusElement = function (reset) {
 		if (reset) this.lastTabindex = null;
-		var els = this.query('[tabindex]');
+		var els = this.query('[' + _tabindexAttr + ']');
 		if (!els.length) {
 			this.overlay.focus();
 			return;
@@ -334,52 +417,37 @@
 		els = _toArray(els);
 		els.sort(function (a, b) {
 			if (!a.getAttribute || !b.getAttribute) return -1;
-			return _toInt(a.getAttribute('tabindex')) - _toInt(b.getAttribute('tabindex'));
+			return _toInt(a.getAttribute(_tabindexAttr)) - _toInt(b.getAttribute(_tabindexAttr));
 		});
 		if (this.lastTabindex) {
 			for (var e = 0; e < els.length; e++) {
-				if (els[e].getAttribute('tabindex') == this.lastTabindex && e < els.length - 1) {
+				if (els[e].getAttribute(_tabindexAttr) == this.lastTabindex && e < els.length - 1) {
 					els[e + 1].focus();
-					this.lastTabindex = els[e + 1].getAttribute('tabindex');
+					this.lastTabindex = els[e + 1].getAttribute(_tabindexAttr);
 					return;
 				}
 			}
 		}
 		els[0].focus();
-		this.lastTabindex = els[0].getAttribute('tabindex');
+		this.lastTabindex = els[0].getAttribute(_tabindexAttr);
 	};
-	Huer.prototype.hide = function (callback) {
-		if (!this.isVisible) return;
-
-		_off(window, 'keydown', this.vars.onWindowKeydownEvent);
-
-		this.toggleEffects(callback);
-		this.isVisible = false;
-	};
-	Huer.prototype.getHtml = function () {
+	proto.getHtml = function () {
 		return this.container;
 	};
-	Huer.prototype.query = function (string) {
+	proto.query = function (string) {
 		return _toArray(this.container.querySelectorAll(string));
 	};
-	Huer.prototype.click = function (els, func) {
+	proto.click = function (els, func) {
 		if (_isString(els)) els = this.query(els);
 		_tapOn(els, func);
 	};
-	Huer.prototype.attr = function (els, attrib, value) {
+	proto.attr = function (els, attrib, value) {
 		if (_isString(els)) els = this.query(els);
 		_attr(_toArray(els), attrib, value);
 	};
-	Huer.prototype.isBusy = function (set) {
+	proto.isBusy = function (set) {
 		if (set !== undefined && (set === true || set === false)) this.busy = set;
 		return this.busy || false;
-	};
-	Huer.prototype.destroy = function () {
-		var _this = this;
-		_this.hide(function () {
-			_removeNode(_this.container);
-			_this = null;
-		});
 	};
 
 	var _instance = null;
@@ -392,5 +460,16 @@
 		return _instance;
 	};
 	this.huer.globals = defaults;
-
+	/*this.huer.setGlobal = function () {
+		if (_isObject(arguments[0])) {
+			var obj = arguments[0];
+			for (var i in obj) {
+				if (defaults[i] !== undefined) defaults[i] = obj[i];
+			}
+		} else if (arguments[0] && arguments[1]) {
+			var key = arguments[0],
+				val = arguments[1];
+			if (defaults[key] !== undefined) defaults[key] = val;
+		}
+	}*/
 }).call(this);

@@ -30,7 +30,7 @@
 					<h2>(hue +‎ -er) One who cries out or gives an alarm</h2>
 					<ul>
 						<li>Dependency free</li>
-						<li>About 10 KB miminized including css</li>
+						<li>About 12 KB miminized including css</li>
 					</ul>
 					<div style="text-align: center">
 						<a class="bigbutton" id="demo1">Demo</a>
@@ -71,6 +71,11 @@ instance.show();
 					<p>Using your own html gives you the power to use as many buttons as you want. There's one thing you can think about when constructing your html and that's tabindex on buttons. Not using the tabindex will make the tab-button on your keyboard useless.</p>
 					<pre><code class="js" id="example3"></code></pre>
 					<p><button class="btn btn-green" id="test3">Unsaved changes demo</button></p>
+
+					<h2>Forms</h2>
+					<p>You can also use huer as a form.</p>
+					<pre><code class="js" id="example4"></code></pre>
+					<p><button class="btn btn-green" id="test4">Form demo</button></p>
 				</div>
 			</div>
 		</div>
@@ -91,16 +96,16 @@ instance.show();
 					</thead>
 					<tbody>
 						<tr>
-							<td><small>void</small> show()</td>
-							<td>Shows the view unless already shown.</td>
+							<td><small>void</small> show(function)</td>
+							<td>Shows the view unless already shown. The callback function is optional.</td>
 						</tr>
 						<tr>
-							<td><small>void</small> hide()</td>
-							<td>Hides the view unless already hidden.</td>
+							<td><small>void</small> hide(function)</td>
+							<td>Hides the view unless already hidden. The callback function is optional.</td>
 						</tr>
 						<tr>
-							<td><small>void</small> destroy()</td>
-							<td>Destroys the view and sets the instance to null.</td>
+							<td><small>void</small> destroy(function)</td>
+							<td>Destroys the view and sets the instance to null. The callback is optional.</td>
 						</tr>
 						<tr>
 							<td><small>Element</small> getHtml()</td>
@@ -150,16 +155,40 @@ instance.show();
 							<td>Turns on/off the automatic display of the view after initialization.</td>
 						</tr>
 						<tr>
-							<td>clickOutsideToDismiss <small>bool</small>
+							<td>showOnInit <small>bool</small>
 								<br><small>(default: true)</small>
 							</td>
-							<td>Turns on/off the dismissal of the view when clicking on the overlay.</td>
+							<td>Turns on/off the automatic display of the view after initialization.</td>
 						</tr>
 						<tr>
-							<td>featureFailCallback <small>function(features)</small>
+							<td>preventScroll <small>bool</small>
+								<br><small>(default: false)</small>
+							</td>
+							<td>Turns on/off scrolling of the document body when the view is active. This feature is a little buggy so I'd suggest not using it...</td>
+						</tr>
+						<tr>
+							<td>destroyOnEsc <small>bool</small>
+								<br><small>(default: false)</small>
+							</td>
+							<td>Turns on/off the dismissal of the view when pressing the ESC-button.</td>
+						</tr>
+						<tr>
+							<td>onFeatureFail <small>function(features)</small>
 								<br><small>(default: null)</small>
 							</td>
 							<td>If the browser lacks the necessary features an alert will be shown. But as an option you could use a callback function to mend the situation. The function takes one argument which will be the feature control object.</td>
+						</tr>
+						<tr>
+							<td>onDismiss <small>function()</small>
+								<br><small>(default: null)</small>
+							</td>
+							<td>Callback for when the view has been dismissed by clicking on the overlay or hitting the ESC-button.</td>
+						</tr>
+						<tr>
+							<td>overlayClass <small>string</small>
+								<br><small>(default: null)</small>
+							</td>
+							<td>Classname appended to the overlay in case you want to change color or add a background image.</td>
 						</tr>
 						<tr>
 							<td>blurContent <small>bool</small>
