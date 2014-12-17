@@ -141,10 +141,32 @@ function example3() {
 		huer(html);
 	});
 }
+
+function example4() {
+	var example = '';
+	example += 'var html = \'<h3>Login</h3>\';';
+	example += '\nhtml += \'<p><input tabindex="1" placeholder="Fake email" class="form-input-simple" type="text" />\';';
+	example += '\nhtml += \'<input tabindex="2" placeholder="Fake password" class="form-input-simple" type="password" /></p>\';';
+	example += '\nhtml += \'<button tabindex="3" data-destroy="click" class="btn btn-green">Fake login</button>\';';
+	example += '\nhuer(html);';
+	document.getElementById('example4').innerHTML = escapeHtml(example);
+	_tapOn(document.getElementById('test4'), function () {
+		var html = '<h3>Login</h3>';
+		html += '<p><input tabindex="1" placeholder="Fake email" class="form-input-simple" type="text" />';
+		html += '<input tabindex="2" placeholder="Fake password" class="form-input-simple" type="password" /></p>';
+		html += '<button tabindex="3" data-destroy="click" class="btn btn-green">Fake login</button>';
+		huer({
+			html: html,
+			destroyOnEsc: true,
+			destroyOnClick: true
+		});
+	});
+}
 document.addEventListener('DOMContentLoaded', function () {
 	hljs.initHighlightingOnLoad();
 	demo1();
 	example1();
 	example2();
 	example3();
+	example4();
 });
