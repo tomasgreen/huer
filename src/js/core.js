@@ -256,9 +256,19 @@
 		var body = _createElement('div.' + _classBody, null, container);
 		if (_this.opt.overlayClass) _addClass(overlay, _this.opt.overlayClass);
 		if (_this.opt.wrapContent) {
-			_createElement('div.' + _classContentWrapper, null, body, _this.opt.html);
+			if (_isString(_this.opt.html)) {
+				_createElement('div.' + _classContentWrapper, null, body, _this.opt.html);
+			} else {
+				var containerEl = _createElement('div.' + _classContentWrapper, null, body);
+				containerEl.appendChild(_this.opt.html);
+			}
 		} else {
-			body.innerHTML = _this.opt.html;
+			if (_isString(_this.opt.html)) {
+				body.innerHTML = _this.opt.html;
+			} else {
+				var containerEl = _createElement('div.' + _classContentWrapper, null, body);
+				body.appendChild(_this.opt.html);
+			}
 		}
 		_this.container = container;
 		_this.overlay = overlay;
@@ -299,6 +309,7 @@
 		var _this = this;
 		_this.hide(function () {
 			if (callback) callback();
+			else if (_this.opt.onDismiss) _this.opt.onDismiss();
 			_removeNode(_this.container);
 			_this = null;
 		});
@@ -378,7 +389,7 @@
 		}
 	};
 	proto.onOverlayClick = function () {
-		if (this.isVisible && this.opt.destroyOnClick && !this.isBusy()) this.destroy(this.opt.onDismiss);
+		if (this.isVisible && this.opt.destroyOnClick && !this.isBusy()) this.destroy();
 	};
 	proto.toggleOverlayClick = function () {
 		var _this = this;
@@ -400,7 +411,7 @@
 		if ([9, 13, 32, 27].indexOf(keyCode) === -1) {
 			if (!_isChild(el, this.body)) return;
 		} else if (keyCode === 27 && this.opt.destroyOnEsc && !this.isBusy()) {
-			this.destroy(this.opt.onDismiss);
+			this.destroy();
 		} else if (keyCode === 9) {
 			_stopEventPropagation(e);
 			this.focusElement();
