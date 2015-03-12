@@ -10,8 +10,8 @@
 	<title>huer</title>
 	<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.1/normalize.min.css">
 	<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/styles/github.min.css">
-	<link rel="stylesheet" type="text/css" href="static/huer-0.1.1.min.css?v=0.1.1-build3">
-	<link rel="stylesheet" type="text/css" href="static/style.css?v=0.1.1-build3">
+	<link rel="stylesheet" type="text/css" href="static/huer-0.1.2.min.css?v=0.1.2-build1">
+	<link rel="stylesheet" type="text/css" href="static/style.css?v=0.1.2-build1">
 </head>
 <body>
 	<div class="site" data-huer-effect="blur">
@@ -192,9 +192,9 @@ instance.show();
 						</tr>
 						<tr>
 							<td>blurContent <small>bool</small>
-								<br><small>(default: true) </small>
+								<br><small>(default: false) </small>
 							</td>
-							<td>Turns on/off the blurring of the backdrop. Which elemens are to be blurred can be set with the options <strong>blurSelector</strong> or <strong>blurAllSiblings</strong>. This property will be turned off if the browser does not support filter. <strong>Observe</strong> that filters cannot be animated with the latest stable releases of Firefox and IE <small>(referencedate 2014-11-21)</small>. This means that the feature test will pass but not work in those browsers.</td>
+							<td>Turns on/off the blurring of the backdrop. Which elemens are to be blurred can be set with the options <strong>blurSelector</strong> or <strong>blurAllSiblings</strong>. This property will be turned off if the browser does not support filter. <strong>Observe</strong> that filters cannot be animated with the latest stable releases of Firefox and IE <small>(referencedate 2014-11-21)</small>. This means that the feature test will pass but not work in those browsers. Also, beware of the the horrible performence of this feature in most browsers <small>(referencedate 2015-03-12)</small> except Safari (where it rules) .</td>
 						</tr>
 						<tr>
 							<td>blurAllSiblings <small>bool</small>
@@ -227,7 +227,7 @@ instance.show();
 		</div>
 	</div>
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/highlight.min.js"></script>
-	<script src="static/huer-0.1.1.min.js?v=0.1.1-build3"></script>
-	<script src="static/examples.js?v=0.1.1-build3" type="text/javascript"> </script>
+	<script src="static/huer-0.1.2.min.js?v=0.1.2-build1"></script>
+	<script src="static/examples.js?v=0.1.2-build1" type="text/javascript"> </script>
 </body>
 </html>

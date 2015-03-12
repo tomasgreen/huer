@@ -212,7 +212,7 @@
 		onFeatureFail: null,
 		onDismiss: null,
 		overlayClass: null,
-		blurContent: true,
+		blurContent: false,
 		blurAllSiblings: false,
 		blurSelector: '[data-huer-effect="blur"]',
 		wrapContent: true,
