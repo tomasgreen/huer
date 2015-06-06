@@ -299,7 +299,7 @@
 		_this.focusElement(true);
 	};
 	proto.hide = function (callback) {
-		if (!this.isVisible) return;
+		/*if (!this.isVisible) return;*/
 
 		_off(window, 'keydown', this.vars.onKeydownEvent);
 
@@ -363,7 +363,7 @@
 				_this.isVisible = false;
 
 				if (callback) callback();
-			};
+			}
 			_one(_this.body, _animationEndEvents, animationOutEnd);
 
 			_addClass(_this.overlay, _classFadeOut);
@@ -377,7 +377,7 @@
 				_this.isVisible = true;
 				_this.toggleOverlayClick();
 				if (callback) callback();
-			};
+			}
 			_one(_this.body, _animationEndEvents, animationInEnd);
 
 			_this.toggleScroll(false);
