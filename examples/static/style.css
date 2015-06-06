@@ -189,8 +189,6 @@ hr.menu {
   margin-bottom: 15px;
 }
 .form-input:focus {
-  -webkit-box-shadow: 0px 0px 4px 0px rgba(100, 100, 100, 0.4);
-  -moz-box-shadow: 0px 0px 4px 0px rgba(100, 100, 100, 0.4);
   box-shadow: 0px 0px 4px 0px rgba(100, 100, 100, 0.4);
 }
 .btn {
@@ -231,8 +229,6 @@ hr.menu {
 }
 .btn:not([disabled]):active,
 .btn:not([disabled]):focus {
-  -webkit-box-shadow: 0px 0px 4px 0px rgba(100, 100, 100, 0.4);
-  -moz-box-shadow: 0px 0px 4px 0px rgba(100, 100, 100, 0.4);
   box-shadow: 0px 0px 4px 0px rgba(100, 100, 100, 0.4);
 }
 .btn-blue {
@@ -242,8 +238,6 @@ hr.menu {
 }
 .btn-blue:not([disabled]):active,
 .btn-blue:not([disabled]):focus {
-  -webkit-box-shadow: 0px 0px 4px 0px #8c381d;
-  -moz-box-shadow: 0px 0px 4px 0px #8c381d;
   box-shadow: 0px 0px 4px 0px #8c381d;
 }
 .btn-blue:not([disabled]):hover {
@@ -261,8 +255,6 @@ hr.menu {
 }
 .btn-green:not([disabled]):active,
 .btn-green:not([disabled]):focus {
-  -webkit-box-shadow: 0px 0px 4px 0px #35674d;
-  -moz-box-shadow: 0px 0px 4px 0px #35674d;
   box-shadow: 0px 0px 4px 0px #35674d;
 }
 .btn-green:not([disabled]):hover {
@@ -280,8 +272,6 @@ hr.menu {
 }
 .btn-red:not([disabled]):active,
 .btn-red:not([disabled]):focus {
-  -webkit-box-shadow: 0px 0px 4px 0px #5b1a00;
-  -moz-box-shadow: 0px 0px 4px 0px #5b1a00;
   box-shadow: 0px 0px 4px 0px #5b1a00;
 }
 .btn-red:not([disabled]):hover {
