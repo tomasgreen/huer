@@ -252,6 +252,7 @@
 		}
 
 		var container = _createElement('div.' + _classContainer);
+		var containerEl;
 		var overlay = _createElement('div.' + _classOverlay, null, container);
 		var body = _createElement('div.' + _classBody, null, container);
 		if (_this.opt.overlayClass) _addClass(overlay, _this.opt.overlayClass);
@@ -259,14 +260,14 @@
 			if (_isString(_this.opt.html)) {
 				_createElement('div.' + _classContentWrapper, null, body, _this.opt.html);
 			} else {
-				var containerEl = _createElement('div.' + _classContentWrapper, null, body);
+				containerEl = _createElement('div.' + _classContentWrapper, null, body);
 				containerEl.appendChild(_this.opt.html);
 			}
 		} else {
 			if (_isString(_this.opt.html)) {
 				body.innerHTML = _this.opt.html;
 			} else {
-				var containerEl = _createElement('div.' + _classContentWrapper, null, body);
+				containerEl = _createElement('div.' + _classContentWrapper, null, body);
 				body.appendChild(_this.opt.html);
 			}
 		}
@@ -351,7 +352,7 @@
 			return;
 		}
 		if (_this.isVisible) {
-			function animationOutEnd() {
+			_one(_this.body, _animationEndEvents, function() {
 				_removeClass(_this.overlay, _classFadeOut);
 				_removeClass(_this.body, _classZoomOut);
 				_this.container.style.display = 'none';
@@ -363,22 +364,20 @@
 				_this.isVisible = false;
 
 				if (callback) callback();
-			}
-			_one(_this.body, _animationEndEvents, animationOutEnd);
+			});
 
 			_addClass(_this.overlay, _classFadeOut);
 			_addClass(_this.body, _classZoomOut);
 			_this.toggleOverlayClick();
 			_this.focusContent();
 		} else {
-			function animationInEnd() {
+			_one(_this.body, _animationEndEvents, function() {
 				_removeClass(_this.overlay, _classFadeIn);
 				_removeClass(_this.body, _classBounceIn);
 				_this.isVisible = true;
 				_this.toggleOverlayClick();
 				if (callback) callback();
-			}
-			_one(_this.body, _animationEndEvents, animationInEnd);
+			});
 
 			_this.toggleScroll(false);
 
