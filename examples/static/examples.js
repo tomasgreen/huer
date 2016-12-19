@@ -163,6 +163,7 @@ function example4() {
 	});
 }
 document.addEventListener('DOMContentLoaded', function () {
+	huer.globals.contentClass = "test",
 	hljs.initHighlightingOnLoad();
 	demo1();
 	example1();

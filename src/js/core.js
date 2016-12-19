@@ -196,7 +196,6 @@
 		_removeNode(el);
 		return _scrollbarWidth;
 	}
-
 	var defaults = {
 		html: 'Empty',
 		showOnInit: true,
@@ -208,6 +207,7 @@
 		onDismiss: null,
 		overlayClass: null,
 		bodyClass: null,
+		contentClass: null,
 		blurContent: false,
 		blurAllSiblings: false,
 		blurSelector: '[data-huer-effect="blur"]',
@@ -254,9 +254,11 @@
 		if (_this.opt.bodyClass) _addClass(body, _this.opt.bodyClass);
 		if (_this.opt.wrapContent) {
 			if (_isString(_this.opt.html)) {
-				_createElement('div.' + _classContentWrapper, null, body, _this.opt.html);
+				var t = _createElement('div.' + _classContentWrapper, null, body, _this.opt.html);
+				if (_this.opt.contentClass) _addClass(t, _this.opt.contentClass);
 			} else {
 				containerEl = _createElement('div.' + _classContentWrapper, null, body);
+				if (_this.opt.contentClass) _addClass(containerEl, _this.opt.contentClass);
 				containerEl.appendChild(_this.opt.html);
 			}
 		} else {
@@ -264,6 +266,7 @@
 				body.innerHTML = _this.opt.html;
 			} else {
 				containerEl = _createElement('div.' + _classContentWrapper, null, body);
+				if (_this.opt.contentClass) _addClass(containerEl, _this.opt.contentClass);
 				body.appendChild(_this.opt.html);
 			}
 		}
@@ -279,7 +282,6 @@
 		});
 	};
 	var proto = Huer.prototype;
-
 	proto.show = function (callback) {
 		var _this = this;
 		if (_this.isVisible) return;
