@@ -79,7 +79,16 @@
 	animation-name: huerZoomOut;
 }
 .huer-container {
-	display: none;
+	z-index: 2000;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	visibility: none;
 	.huer-overlay {
 		position: fixed;
 		top: 0;
@@ -91,9 +100,6 @@
 		animation-duration:0.25s;
 	}
 	.huer-body {
-		position: fixed;
-		top: 50%;
-		left: 50%;
 		z-index: 2000;
 		animation-duration:0.25s;
 	}

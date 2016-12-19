@@ -119,7 +119,7 @@ a:hover {
   -ms-user-select: none;
   user-select: none;
   background-color: #58aa7f;
-  color: #ffffff;
+  color: #000000;
 }
 .bigbutton:hover {
   background-color: rgba(255, 255, 255, 0.2);
@@ -233,7 +233,7 @@ hr.menu {
 }
 .btn-blue {
   color: #ffffff;
-  background-color: #b64926;
+  background-color: #B64926;
   border: 1px solid #a14122;
 }
 .btn-blue:not([disabled]):active,
@@ -249,7 +249,7 @@ hr.menu {
   border: 1px solid #4d1f10;
 }
 .btn-green {
-  color: #ffffff;
+  color: #000000;
   background-color: #468966;
   border: 1px solid #3d7859;
 }
@@ -267,7 +267,7 @@ hr.menu {
 }
 .btn-red {
   color: #ffffff;
-  background-color: #8e2800;
+  background-color: #8E2800;
   border: 1px solid #752100;
 }
 .btn-red:not([disabled]):active,
@@ -320,4 +320,7 @@ hr.menu {
   .row {
     width: 1170px;
   }
+}
+.btn-green {
+  color: #fff;
 }

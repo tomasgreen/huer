@@ -58,7 +58,7 @@ gulp.task('examples-less', function() {
 	gulp.src('./examples/static/*.less')
 		.pipe(less())
 		.pipe(autoprefixer({
-			browsers: ['last 2 versions'],
+            browsers: ['last 3 versions', 'android >= 4.2'],
 			cascade: false
 		}))
 		.pipe(rename('style.css'))

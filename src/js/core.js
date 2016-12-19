@@ -189,11 +189,6 @@
 		return (typeof obj === 'string');
 	}
 
-	function _centerize(el) {
-		el.style.marginTop = ((el.offsetHeight / 2) * -1) + 'px';
-		el.style.marginLeft = ((el.offsetWidth / 2) * -1) + 'px';
-	}
-
 	function _getScrollbarWidth() {
 		if (_scrollbarWidth > 0) return _scrollbarWidth;
 		var el = _createElement('div.huer-scrollbar-measure', null, document.body);
@@ -212,11 +207,11 @@
 		onFeatureFail: null,
 		onDismiss: null,
 		overlayClass: null,
+		bodyClass: null,
 		blurContent: false,
 		blurAllSiblings: false,
 		blurSelector: '[data-huer-effect="blur"]',
-		wrapContent: true,
-		centerize: true
+		wrapContent: true
 	};
 	var Huer = function () {
 		var options;
@@ -256,6 +251,7 @@
 		var overlay = _createElement('div.' + _classOverlay, null, container);
 		var body = _createElement('div.' + _classBody, null, container);
 		if (_this.opt.overlayClass) _addClass(overlay, _this.opt.overlayClass);
+		if (_this.opt.bodyClass) _addClass(body, _this.opt.bodyClass);
 		if (_this.opt.wrapContent) {
 			if (_isString(_this.opt.html)) {
 				_createElement('div.' + _classContentWrapper, null, body, _this.opt.html);
@@ -287,11 +283,6 @@
 	proto.show = function (callback) {
 		var _this = this;
 		if (_this.isVisible) return;
-
-		_this.container.style.visibility = 'hidden';
-		_this.container.style.display = 'block';
-
-		if (_this.opt.centerize) _centerize(_this.body);
 
 		_this.container.style.visibility = 'visible';
 
@@ -355,7 +346,7 @@
 			_one(_this.body, _animationEndEvents, function() {
 				_removeClass(_this.overlay, _classFadeOut);
 				_removeClass(_this.body, _classZoomOut);
-				_this.container.style.display = 'none';
+				_this.container.style.visibility = 'hidden';
 				/*
 					toggleScroll needs to be called after the animations are done,
 					if not the effects will lag
