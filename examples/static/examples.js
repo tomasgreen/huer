@@ -1,3 +1,9 @@
+function getTemplate(id) {
+	var el = document.getElementById(id)
+	if (!el.content) return document.importNode(el.children, true);
+	if (el) return document.importNode(el.content, true);
+	return null;
+}
 var _isTouchDevice = 'ontouchstart' in document.documentElement;
 var entityMap = {
 	"&": "&amp;",
@@ -162,6 +168,18 @@ function example4() {
 		});
 	});
 }
+function example5() {
+	var example = '';
+	example += '<div class="modal">Your modal view<br> <br> <button class="btn btn-green" data-destroy="click">Close</button></div>';
+	_tapOn(document.getElementById('test5'), function () {
+		huer({
+			html: example,
+			destroyOnEsc: true,
+			destroyOnClick: true,
+			modal: true
+		});
+	});
+}
 document.addEventListener('DOMContentLoaded', function () {
 	hljs.initHighlightingOnLoad();
 	demo1();
@@ -169,4 +187,13 @@ document.addEventListener('DOMContentLoaded', function () {
 	example2();
 	example3();
 	example4();
+	example5();
 });
+
+/**!
+ * # huer
+ * Author: Tomas Green (http://www.github.com/tomasgreen)
+ * License: MIT
+ * Version: 0.1.1
+ */
+
