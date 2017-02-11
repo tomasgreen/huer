@@ -16,13 +16,13 @@
 		_classFadeOut = _classPrefix + 'fade-out',
 		_classBounceIn = _classPrefix + 'bounce-in',
 		_classZoomOut = _classPrefix + 'zoom-out',
-		_classBlur = _classPrefix + 'blur',
-		_classFocus = _classPrefix + 'focus',
 		_classStopScroll = _classPrefix + 'stop-scrolling',
 		_classContainer = _classPrefix + 'container',
-		_classOverlay = _classPrefix + 'overlay',
+		_classContainerCenter = _classPrefix + 'container-center',
+		_classContainerCenterForced = _classPrefix + 'container-center-forced',
 		_classBody = _classPrefix + 'body',
 		_classContentWrapper = _classPrefix + 'content-wrapper',
+		_classModal = _classPrefix + 'modal',
 		_tabindexAttr = 'tabindex';
 
 	function _removeNode(element) {
@@ -96,27 +96,11 @@
 	}
 
 	function _tapOn(el, func) {
-		if (!_isTouchDevice) {
-			_on(el, 'click', func);
-			return;
-		}
-		var t = false;
-		_on(el, 'touchstart', function (ev) {
-			t = true;
-		});
-		_on(el, 'touchend', function (ev) {
-			if (t) {
-				func();
-				_stopEventPropagation(ev);
-			}
-		});
-		_on(el, 'touchcancel touchleave touchmove', function (ev) {
-			t = false;
-		});
+		_on(el, 'click', func);
 	}
 
 	function _tapOff(el, func) {
-		_off(el, 'touchstart touchend touchcancel click', func);
+		_off(el, 'click', func);
 	}
 
 	function _each(o, func) {
@@ -128,24 +112,33 @@
 	}
 
 	function _one(el, events, func, useCapture) {
-		_on(el, events, function (ev) {
+		var fnc = function (ev) {
+			_off(el, events, fnc, useCapture);
 			func(ev);
-			_off(el, events, func);
-		}, useCapture);
+		}
+		_on(el, events, fnc, useCapture);
 	}
 
 	function _on(els, events, func, useCapture) {
+		if (useCapture === undefined) useCapture = false
 		_each(els, function (el) {
 			var ev = events.split(' ');
 			for (var e in ev) el.addEventListener(ev[e], func, useCapture);
 		});
 	}
 
-	function _off(els, events, func) {
+	function _off(els, events, func, useCapture) {
+		if (useCapture === undefined) useCapture = false
 		_each(els, function (el) {
 			var ev = events.split(' ');
-			for (var e in ev) el.removeEventListener(ev[e], func);
+			for (var e in ev) el.removeEventListener(ev[e], func, useCapture);
 		});
+	}
+
+	function _isChild(c, p) {
+		if (!c || !p || !c.parentNode) return false;
+		else if (c === p || c.parentNode === p) return true;
+		return _isChild(c.parentNode, p);
 	}
 
 	function _addClass(els, cls) {
@@ -191,7 +184,8 @@
 
 	function _getScrollbarWidth() {
 		if (_scrollbarWidth > 0) return _scrollbarWidth;
-		var el = _createElement('div.huer-scrollbar-measure', null, document.body);
+		var doc = document.body || document.documentElement
+		var el = _createElement('div.huer-scrollbar-measure', null, doc);
 		_scrollbarWidth = el.offsetWidth - el.clientWidth
 		_removeNode(el);
 		return _scrollbarWidth;
@@ -200,7 +194,7 @@
 		html: 'Empty',
 		showOnInit: true,
 		useEffects: true,
-		preventScroll: false,
+		preventScroll: true,
 		destroyOnClick: false,
 		destroyOnEsc: false,
 		onFeatureFail: null,
@@ -208,10 +202,8 @@
 		overlayClass: null,
 		bodyClass: null,
 		contentClass: null,
-		blurContent: false,
-		blurAllSiblings: false,
-		blurSelector: '[data-huer-effect="blur"]',
-		wrapContent: true
+		forceCenter: false,
+		modal: false
 	};
 	var Huer = function () {
 		var options;
@@ -223,7 +215,7 @@
 				html: arguments[0]
 			};
 		}
-		_this.element = document.body;
+		_this.element = document.body || document.documentElement
 		_this.opt = {};
 		_this.vars = {};
 		if (options === undefined) options = {};
@@ -238,7 +230,6 @@
 			filter: _detectCSSFeature('filter'),
 			query: document.querySelectorAll !== undefined
 		};
-		if (!featureSupport.filter) _this.opt.blurContent = false;
 		if (!featureSupport.animation || !featureSupport.transition || !featureSupport.transform) _this.opt.useEffects = false;
 		if (!featureSupport.query) {
 			if (_this.opt.onFeatureFail) _this.opt.onFeatureFail(featureSupport);
@@ -247,31 +238,15 @@
 		}
 
 		var container = _createElement('div.' + _classContainer);
-		var containerEl;
-		var overlay = _createElement('div.' + _classOverlay, null, container);
 		var body = _createElement('div.' + _classBody, null, container);
-		if (_this.opt.overlayClass) _addClass(overlay, _this.opt.overlayClass);
 		if (_this.opt.bodyClass) _addClass(body, _this.opt.bodyClass);
-		if (_this.opt.wrapContent) {
-			if (_isString(_this.opt.html)) {
-				var t = _createElement('div.' + _classContentWrapper, null, body, _this.opt.html);
-				if (_this.opt.contentClass) _addClass(t, _this.opt.contentClass);
-			} else {
-				containerEl = _createElement('div.' + _classContentWrapper, null, body);
-				if (_this.opt.contentClass) _addClass(containerEl, _this.opt.contentClass);
-				containerEl.appendChild(_this.opt.html);
-			}
-		} else {
-			if (_isString(_this.opt.html)) {
-				body.innerHTML = _this.opt.html;
-			} else {
-				containerEl = _createElement('div.' + _classContentWrapper, null, body);
-				if (_this.opt.contentClass) _addClass(containerEl, _this.opt.contentClass);
-				body.appendChild(_this.opt.html);
-			}
-		}
+		if (_this.opt.modal) _addClass(body, _classModal)
+		var wrapperEl = _createElement('div.' + _classContentWrapper, null, body);
+		if (_this.opt.contentClass) _addClass(t, _this.opt.contentClass);
+
+		if (_isString(_this.opt.html)) wrapperEl.innerHTML = _this.opt.html
+		else wrapperEl.appendChild(_this.opt.html);
 		_this.container = container;
-		_this.overlay = overlay;
 		_this.body = body;
 		_this.element.appendChild(_this.container);
 
@@ -280,8 +255,18 @@
 		_this.click('[data-destroy="click"]', function () {
 			if (!_this.isBusy()) _this.destroy(_this.opt.onDismiss);
 		});
+		if(_this.opt.forceCenter) {
+			_addClass(_this.container, _classContainerCenterForced)
+		} else {
+			_on(window, 'resize', _this.windowResize.bind(_this))
+			_this.windowResize()
+		}
 	};
 	var proto = Huer.prototype;
+	proto.windowResize = function () {
+		if (this.body.offsetHeight > window.innerHeight) _removeClass(this.container, _classContainerCenter)
+		else _addClass(this.container, _classContainerCenter)
+	}
 	proto.show = function (callback) {
 		var _this = this;
 		if (_this.isVisible) return;
@@ -305,36 +290,27 @@
 			if (callback) callback();
 			else if (_this.opt.onDismiss) _this.opt.onDismiss();
 			_removeNode(_this.container);
-			_this = null;
+			_instance = null;
 		});
+		_off(window, 'resize', _this.windowResize)
 	};
 	proto.toggleScroll = function (enable) {
-		if (!this.opt.preventScroll) return;
+		var _this = this
+		if (!_this.opt.preventScroll) return;
 		if (enable) {
-			_removeClass(document.body, _classStopScroll);
-			document.body.style.paddingRight = this.vars.bodyPadding;
+			_removeClass(_this.element, _classStopScroll);
+			_this.element.style.paddingRight = _this.vars.bodyPadding;
+			_this.element.style.top = "";
+			window.scrollTo(0, _this.vars.scrollOffset);
+			_this.vars.scrollOffset = null;
 		} else {
-			this.vars.bodyPadding = document.body.style.paddingRight;
-			document.body.style.paddingRight = _toInt(this.vars.bodyPadding) + _toInt(_getScrollbarWidth()) + 'px';
-			_addClass(document.body, _classStopScroll);
+			var top = _this.element.scrollTop || document.documentElement.scrollTop
+			_this.vars.scrollOffset = top
+			_this.element.style.top = (top * -1) + "px"
+			_this.vars.bodyPadding = _this.element.style.paddingRight;
+			_this.element.style.paddingRight = _toInt(_this.vars.bodyPadding) + _toInt(_getScrollbarWidth()) + 'px';
+			_addClass(_this.element, _classStopScroll);
 		}
-	};
-	proto.blurContent = function () {
-		var _this = this;
-		if (!_this.opt.blurContent) return;
-		var els = (_this.opt.blurAllSiblings) ? _this.container.parentNode.childNodes : document.querySelectorAll(_this.opt.blurSelector);
-		for (var i = 0; i < els.length; i++) {
-			if (els[i] == _this.container) continue;
-			_addClass(els[i], _classBlur);
-		}
-	};
-	proto.focusContent = function () {
-		var _this = this;
-		if (!_this.opt.blurContent) return;
-		var els = document.querySelectorAll('.' + _classBlur);
-
-		_removeClass(els, _classBlur);
-		_animateCSS(els, _classFocus);
 	};
 	proto.toggleEffects = function (callback) {
 		var _this = this;
@@ -345,8 +321,8 @@
 			return;
 		}
 		if (_this.isVisible) {
-			_one(_this.body, _animationEndEvents, function() {
-				_removeClass(_this.overlay, _classFadeOut);
+			_one(_this.body, _animationEndEvents, function () {
+				_removeClass(_this.container, _classFadeOut);
 				_removeClass(_this.body, _classZoomOut);
 				_this.container.style.visibility = 'hidden';
 				/*
@@ -359,13 +335,12 @@
 				if (callback) callback();
 			});
 
-			_addClass(_this.overlay, _classFadeOut);
+			_addClass(_this.container, _classFadeOut);
 			_addClass(_this.body, _classZoomOut);
 			_this.toggleOverlayClick();
-			_this.focusContent();
 		} else {
-			_one(_this.body, _animationEndEvents, function() {
-				_removeClass(_this.overlay, _classFadeIn);
+			_one(_this.body, _animationEndEvents, function () {
+				_removeClass(_this.container, _classFadeIn);
 				_removeClass(_this.body, _classBounceIn);
 				_this.isVisible = true;
 				_this.toggleOverlayClick();
@@ -374,14 +349,12 @@
 
 			_this.toggleScroll(false);
 
-			_addClass(_this.overlay, _classFadeIn);
+			_addClass(_this.container, _classFadeIn);
 			_addClass(_this.body, _classBounceIn);
-
-			_this.blurContent();
 		}
 	};
-	proto.onOverlayClick = function () {
-		if (this.isVisible && this.opt.destroyOnClick && !this.isBusy()) this.destroy();
+	proto.onOverlayClick = function (ev) {
+		if (this.isVisible && this.opt.destroyOnClick && !this.isBusy() & !_isChild(ev.target, this.body)) this.destroy();
 	};
 	proto.toggleOverlayClick = function () {
 		var _this = this;
@@ -390,9 +363,9 @@
 		*/
 		setTimeout(function () {
 			if (!_this.vars.onOverlayClickEvent) {
-				_tapOn(_this.overlay, _this.vars.onOverlayClickEvent = _this.onOverlayClick.bind(_this));
+				_tapOn(_this.container, _this.vars.onOverlayClickEvent = _this.onOverlayClick.bind(_this));
 			} else {
-				_tapOff(_this.overlay, _this.vars.onOverlayClickEvent);
+				_tapOff(_this.container, _this.vars.onOverlayClickEvent);
 				_this.vars.onOverlayClickEvent = null;
 			}
 		}, 0);
@@ -414,7 +387,7 @@
 		if (reset) this.lastTabindex = null;
 		var els = this.query('[' + _tabindexAttr + ']');
 		if (!els.length) {
-			this.overlay.focus();
+			this.container.focus();
 			return;
 		}
 		els = _toArray(els);
@@ -455,10 +428,7 @@
 
 	var _instance = null;
 	this.huer = function (options) {
-		if (_instance) {
-			_instance.opt.blurContent = false;
-			_instance.destroy();
-		}
+		if (_instance) _instance.destroy();
 		_instance = new Huer(options);
 		return _instance;
 	};
@@ -475,4 +445,18 @@
 			if (defaults[key] !== undefined) defaults[key] = val;
 		}
 	}*/
+}).call(this);
+(function () {
+	'use strict';
+	var Modal = function () {
+		huer({
+			html: html,
+			destroyOnEsc: true,
+			destroyOnClick: true,
+			wrapContent: false,
+			bodyClass: 'modal',
+			modal: true,
+		});
+	}
+
 }).call(this);
