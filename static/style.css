@@ -119,7 +119,7 @@ a:hover {
   -ms-user-select: none;
   user-select: none;
   background-color: #58aa7f;
-  color: #ffffff;
+  color: #000000;
 }
 .bigbutton:hover {
   background-color: rgba(255, 255, 255, 0.2);
@@ -189,8 +189,6 @@ hr.menu {
   margin-bottom: 15px;
 }
 .form-input:focus {
-  -webkit-box-shadow: 0px 0px 4px 0px rgba(100, 100, 100, 0.4);
-  -moz-box-shadow: 0px 0px 4px 0px rgba(100, 100, 100, 0.4);
   box-shadow: 0px 0px 4px 0px rgba(100, 100, 100, 0.4);
 }
 .btn {
@@ -231,19 +229,15 @@ hr.menu {
 }
 .btn:not([disabled]):active,
 .btn:not([disabled]):focus {
-  -webkit-box-shadow: 0px 0px 4px 0px rgba(100, 100, 100, 0.4);
-  -moz-box-shadow: 0px 0px 4px 0px rgba(100, 100, 100, 0.4);
   box-shadow: 0px 0px 4px 0px rgba(100, 100, 100, 0.4);
 }
 .btn-blue {
   color: #ffffff;
-  background-color: #b64926;
+  background-color: #B64926;
   border: 1px solid #a14122;
 }
 .btn-blue:not([disabled]):active,
 .btn-blue:not([disabled]):focus {
-  -webkit-box-shadow: 0px 0px 4px 0px #8c381d;
-  -moz-box-shadow: 0px 0px 4px 0px #8c381d;
   box-shadow: 0px 0px 4px 0px #8c381d;
 }
 .btn-blue:not([disabled]):hover {
@@ -255,14 +249,12 @@ hr.menu {
   border: 1px solid #4d1f10;
 }
 .btn-green {
-  color: #ffffff;
+  color: #000000;
   background-color: #468966;
   border: 1px solid #3d7859;
 }
 .btn-green:not([disabled]):active,
 .btn-green:not([disabled]):focus {
-  -webkit-box-shadow: 0px 0px 4px 0px #35674d;
-  -moz-box-shadow: 0px 0px 4px 0px #35674d;
   box-shadow: 0px 0px 4px 0px #35674d;
 }
 .btn-green:not([disabled]):hover {
@@ -275,13 +267,11 @@ hr.menu {
 }
 .btn-red {
   color: #ffffff;
-  background-color: #8e2800;
+  background-color: #8E2800;
   border: 1px solid #752100;
 }
 .btn-red:not([disabled]):active,
 .btn-red:not([disabled]):focus {
-  -webkit-box-shadow: 0px 0px 4px 0px #5b1a00;
-  -moz-box-shadow: 0px 0px 4px 0px #5b1a00;
   box-shadow: 0px 0px 4px 0px #5b1a00;
 }
 .btn-red:not([disabled]):hover {
@@ -291,6 +281,25 @@ hr.menu {
 .btn-red:not([disabled]):active {
   background-color: #421200;
   border: 1px solid #0f0400;
+}
+.modal {
+  padding: 0px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  box-sizing: border-box;
+  background-color: #f8f8f8;
+  height: 400px;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
 }
 @media (max-width: 768px) {
   .table {
@@ -330,4 +339,7 @@ hr.menu {
   .row {
     width: 1170px;
   }
+}
+.btn-green {
+  color: #fff;
 }

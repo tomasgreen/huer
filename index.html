@@ -10,9 +10,24 @@
 	<title>huer</title>
 	<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.1/normalize.min.css">
 	<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/styles/github.min.css">
-	<link rel="stylesheet" type="text/css" href="static/huer-0.1.2.min.css?v=0.1.2-build1">
-	<link rel="stylesheet" type="text/css" href="static/style.css?v=0.1.2-build1">
+	<link rel="stylesheet" type="text/css" href="static/huer-0.3.0.css?v=0.3.0-build1">
+	<link rel="stylesheet" type="text/css" href="static/style.css?v=0.3.0-build1">
 </head>
+<template id="modalTemplate">
+	<div class="modal user-modal">
+    <div class="circle-image" t-id="picture"></div>
+        <h2 class="title" t-id="name"></h2>
+        <div class="content">
+            <div class="description" t-id="description"></div>
+            <button class="befriend-btn" t-id="send-friend-request">Skicka vänförfrågan</button>
+        </div>
+        <div class="bottom-bar">
+            <button class="delete" data-destroy="click">Delete</button>
+			<button class="cancel" data-destroy="click">Cancel</button>
+			<button class="save" data-destroy="click">Save</button>
+        </div>
+    </div>
+</template>
 <body>
 	<div class="site" data-huer-effect="blur">
 		<div class="row-container header-container">
@@ -76,6 +91,15 @@ instance.show();
 					<p>You can also use huer as a form.</p>
 					<pre><code class="js" id="example4"></code></pre>
 					<p><button class="btn btn-green" id="test4">Form demo</button></p>
+
+					<h2>Modal</h2>
+					<p>Modal view? No problem! Create your own modal html to get your looks and feel.</p>
+					<pre><code class="js">var instance = huer({
+    html: 'Your html',
+    modal: true
+});
+</code></pre>
+					<p><button class="btn btn-green" id="test5">Modal demo</button></p>
 				</div>
 			</div>
 		</div>
@@ -130,7 +154,7 @@ instance.show();
 				<div class="col">
 					<h1>Options</h1>
 					<p>All default options can be changed via huer.globals</p>
-					<pre><code class="js">huer.globals.blurContent = false;</code></pre>
+					<pre><code class="js">huer.globals.forceCenter = true;</code></pre>
 				</div>
 			</div>
 			<div class="row">
@@ -143,10 +167,10 @@ instance.show();
 					</thead>
 					<tbody>
 						<tr>
-							<td>html <small>string</small>
+							<td>html <small>string/element</small>
 								<br><small>(default: 'Your view is empty') </small>
 							</td>
-							<td>Set the content of your view, which can be anything you desire.</td>
+							<td>Set the content of your view, which can be anything you desire. You can also choose if it should be an element or a string.</td>
 						</tr>
 						<tr>
 							<td>showOnInit <small>bool</small>
@@ -159,12 +183,18 @@ instance.show();
 								<br><small>(default: true)</small>
 							</td>
 							<td>Turns on/off the automatic display of the view after initialization.</td>
+						</tr>
+						<tr>
+							<td>useEffects <small>bool</small>
+								<br><small>(default: true)</small>
+							</td>
+							<td>Turns on/off the animations</td>
 						</tr>
 						<tr>
 							<td>preventScroll <small>bool</small>
-								<br><small>(default: false)</small>
+								<br><small>(default: true)</small>
 							</td>
-							<td>Turns on/off scrolling of the document body when the view is active. This feature is a little buggy so I'd suggest not using it...</td>
+							<td>Turns on/off scrolling of the document body when the view is active.</td>
 						</tr>
 						<tr>
 							<td>destroyOnEsc <small>bool</small>
@@ -191,34 +221,28 @@ instance.show();
 							<td>Classname appended to the overlay in case you want to change color or add a background image.</td>
 						</tr>
 						<tr>
-							<td>blurContent <small>bool</small>
+							<td>bodyClass <small>string</small>
+								<br><small>(default: null)</small>
+							</td>
+							<td>Classname appended to the body in case you want to change sizes or whatever, the original class name won't be removed though</td>
+						</tr>
+						<tr>
+							<td>contentClass <small>string</small>
+								<br><small>(default: null)</small>
+							</td>
+							<td>Classname appended to the content wrapper in case you want to change sizes or whatever, the original class name won't be removed though</td>
+						</tr>
+						<tr>
+							<td>modal <small>bool</small>
 								<br><small>(default: false) </small>
 							</td>
-							<td>Turns on/off the blurring of the backdrop. Which elemens are to be blurred can be set with the options <strong>blurSelector</strong> or <strong>blurAllSiblings</strong>. This property will be turned off if the browser does not support filter. <strong>Observe</strong> that filters cannot be animated with the latest stable releases of Firefox and IE <small>(referencedate 2014-11-21)</small>. This means that the feature test will pass but not work in those browsers. Also, beware of the the horrible performence of this feature in most browsers <small>(referencedate 2015-03-12)</small> except Safari (where it rules) .</td>
+							<td>Turns the huer into a modal</td>
 						</tr>
 						<tr>
-							<td>blurAllSiblings <small>bool</small>
+							<td>forceCenter <small>bool</small>
 								<br><small>(default: false) </small>
 							</td>
-							<td>Turns on/off blurring all siblings to the container element. This option will superseed the <strong>blurSelector</strong>.</td>
-						</tr>
-						<tr>
-							<td>blurSelector <small>string</small>
-								<br><small>(default: [data-huer-effect="blur"]) </small>
-							</td>
-							<td>The query that will decide which elements to blur.</td>
-						</tr>
-						<tr>
-							<td>wrapContent <small>bool</small>
-								<br><small>(default: true) </small>
-							</td>
-							<td>Turns on/off wrapping the content in an element with the default content container class.</td>
-						</tr>
-						<tr>
-							<td>centerize <small>bool</small>
-								<br><small>(default: true) </small>
-							</td>
-							<td>Turns on/off placing the body of the view in the veritcal and horizontal center of the window.</td>
+							<td>Force huer to remain in the center of the screen</td>
 						</tr>
 					</tbody>
 				</table>
@@ -227,7 +251,7 @@ instance.show();
 		</div>
 	</div>
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/highlight.min.js"></script>
-	<script src="static/huer-0.1.2.min.js?v=0.1.2-build1"></script>
-	<script src="static/examples.js?v=0.1.2-build1" type="text/javascript"> </script>
+	<script src="static/huer-0.3.0.js?v=0.3.0-build1"></script>
+	<script src="static/examples.js?v=0.3.0-build1" type="text/javascript"> </script>
 </body>
 </html>
