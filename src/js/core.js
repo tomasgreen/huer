@@ -239,8 +239,8 @@
 
 		var container = _createElement('div.' + _classContainer);
 		var body = _createElement('div.' + _classBody, null, container);
-		if (_this.opt.bodyClass) _addClass(body, _this.opt.bodyClass);
 		if (_this.opt.modal) _addClass(body, _classModal)
+		if (_this.opt.bodyClass) _addClass(body, _this.opt.bodyClass);
 		var wrapperEl = _createElement('div.' + _classContentWrapper, null, body);
 		if (_this.opt.contentClass) _addClass(t, _this.opt.contentClass);
 
